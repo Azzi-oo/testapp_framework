@@ -1,106 +1,91 @@
-# Test Cases for automationteststore.com
+# Тест-кейсы automationteststore.com
 
-## Test Case 1: Filter Categories — Sorting by Name and Price
+## Тест-кейс 1: Фильтр категорий — Сортировка по имени и цене
 
-**Test Object:** Category page with at least 4 products (Apparel & accessories — path=68, 8 products)
 
-**Preconditions:**
-- Browser is open
-- User navigates to the category page: `https://automationteststore.com/index.php?rt=product/category&path=68`
-
-### Test Case 1.1: Sort products by Name A-Z
+### Тест-кейс 1.1: Сортировка по имени A-Z
 
 | Step | Action | Expected Result |
 |------|--------|-----------------|
-| 1 | Open the category page | Category page loads with product grid displayed |
-| 2 | Locate the "Sort By" dropdown (`#sort`) | Dropdown is visible and accessible |
-| 3 | Select "Name A - Z" option (`pd.name-ASC`) | Page reloads with products sorted |
-| 4 | Collect all product names from the grid (`.prdocutname`) | Product names are collected |
-| 5 | Verify the product names are in ascending alphabetical order | Names list equals sorted(names, case-insensitive) |
+| 1 | Открыть страницу категории | Страница категории загружается с отображением  товаров |
+| 2 | Найдите выпадающее меню «Sort by». | Выпадпющее меню доступно |
+| 3 | Выбрать "Name A - Z" option | Страница перезагрузится с сортированными элементами |
+| 4 | Собрать все названия таваров из таблицы | Названия товаров собраны |
+| 5 | Посмотреть что названия товаров находятся в алфавитном порядке | Список имен равен отсортированному списку имен |
 
-### Test Case 1.2: Sort products by Name Z-A
-
-| Step | Action | Expected Result |
-|------|--------|-----------------|
-| 1 | Open the category page | Category page loads with product grid displayed |
-| 2 | Select "Name Z - A" option (`pd.name-DESC`) from the Sort By dropdown | Page reloads with products sorted |
-| 3 | Collect all product names from the grid | Product names are collected |
-| 4 | Verify the product names are in descending alphabetical order | Names list equals sorted(names, reverse=True, case-insensitive) |
-
-### Test Case 1.3: Sort products by Price Low > High
+### Тест-кейс 1.2: Сортировка товаров поимени Name Z-A
 
 | Step | Action | Expected Result |
 |------|--------|-----------------|
-| 1 | Open the category page | Category page loads with product grid displayed |
-| 2 | Select "Price Low > High" option (`p.price-ASC`) from the Sort By dropdown | Page reloads with products sorted |
-| 3 | Collect all product prices from the grid (`.oneprice` or `.pricenew`) | Prices are collected as float values |
-| 4 | Verify the prices are in ascending numerical order | Prices list equals sorted(prices) |
+| 1 | Открыть страницу категории | Страница категории загружается с отображением  товаров |
+| 2 | Выбрать "Name Z - A" из выпадающего списка | Страница перезагрузится с сортированными элементами |
+| 3 | Собрать все названия таваров из таблицы | Названия товаров собраны |
+| 4 | Посмотреть что названия товаров расположены в порядке убывания | Список имен равен отсортированному списку имен  |
 
-### Test Case 1.4: Sort products by Price High > Low
+### Тест-кейс 1.3: Сортировка товаров по цене от меньшего к большему
 
 | Step | Action | Expected Result |
 |------|--------|-----------------|
-| 1 | Open the category page | Category page loads with product grid displayed |
-| 2 | Select "Price High > Low" option (`p.price-DESC`) from the Sort By dropdown | Page reloads with products sorted |
-| 3 | Collect all product prices from the grid | Prices are collected as float values |
-| 4 | Verify the prices are in descending numerical order | Prices list equals sorted(prices, reverse=True) |
+| 1 | Открыть страницу категории | Страница категории загружается с отображением  товаров |
+| 2 | Выбрать "Price Low > High" из выпадающего списка | Страница перезагрузится с сортированными элементами |
+| 3 | Собрать все цены товаров из таблицы | Цены товаров собраны |
+| 4 | Посмотреть что цены товаров находятся в порядке возрастания | Список цен равен отсортированной цене |
+
+### Тест-кейс 1.4: Сортировка товаров по цене от большего к меньшему
+
+| Step | Action | Expected Result |
+|------|--------|-----------------|
+| 1 | Открыть страницу категории | Страница категории загружается с отображением  товаров |
+| 2 | Выбрать "Price High > Low" из выпадающего списка | Страница перезагрузится с сортированными элементами |
+| 3 | Собрать все цены товаров из таблицы | Цены товаров собраны |
+| 4 | Посмотреть что цены товаров находятся в порядке убывания | Список цен равен отсортированной цене |
 
 ---
 
-## Test Case 2: Search Results and Cart
+## Тест-кейс 2: Поиск результатов и карты
 
-**Test Object:** Search functionality and cart operations
 
-**Preconditions:**
-- Browser is open
-- Cart is empty
-
-### Test Case 2.1: Search, sort, add to cart, and verify total after doubling cheapest
+### Тест-кейс 2.1: Поиск, сортировка, добавить карту, и проверка итоговой суммы после удвоения дещевой карты
 
 | Step | Action | Expected Result |
 |------|--------|-----------------|
-| 1 | Open the main page `https://automationteststore.com/` | Main page loads |
-| 2 | Enter "shirt" in the search field (`#filter_keyword`) and submit | Search results page loads |
-| 3 | Verify search results are displayed | At least 2 products are shown |
-| 4 | Select "Name A - Z" from the Sort By dropdown (`#sort`) | Products are sorted by name ascending |
-| 5 | Identify the 2nd and 3rd products from the sorted results | Products are identified by index |
-| 6 | Click on the 2nd product to open its product page | Product page loads |
-| 7 | Set a random quantity (2-5) in the quantity input (`#product_quantity`) | Quantity is set |
-| 8 | Click "Add to Cart" button | Product added to cart, confirmation displayed |
-| 9 | Navigate back to search results | Search results page loads |
-| 10 | Click on the 3rd product to open its product page | Product page loads |
-| 11 | Set a random quantity (2-5) in the quantity input | Quantity is set |
-| 12 | Click "Add to Cart" button | Product added to cart |
-| 13 | Navigate to the cart page (`checkout/cart`) | Cart page loads with 2 items |
-| 14 | Identify the cheapest product in the cart by comparing unit prices | Cheapest product found |
-| 15 | Double the quantity of the cheapest product (update quantity field, click Update) | Quantity is updated |
-| 16 | Verify the cart total matches the sum of (unit_price * quantity) for all items | Cart total equals calculated total |
+| 1 | Открыть главную страницу `https://automationteststore.com/` | Главная страница открывается |
+| 2 | Ввести "shirt" в поисковое поле и нажать "Отправить" | Загружается страница результатов поиска |
+| 3 | Проверить отображение элментов "shirt" | Отображены минимум 2 элемента |
+| 4 | Выбрать "Name A - Z" из выпадающего списка | Страница перезагрузится с сортированными элементами |
+| 5 | Определить 2-ой и 3-ий товары из отсортированного списка | Товары распределены по порядку |
+| 6 | Нажать на 2-ой товар, чтобы провалится в карточку товара | Страница товара загружается |
+| 7 | Задать случайное число от (2-5) в поле ввода количсетва | Кол-во задано |
+| 8 | Нажать "Add to Cart" кнопку | Товар добавляется в корзину |
+| 9 | Вернуться к результатам поиска | Страница с результатами поиска загружается |
+| 10 | Нажать на 3-ий товар, чтобы открыть его карточку | Страница товара загружается |
+| 11 | Задать случайное число от (2-5) в поле ввода количсетва | Кол-во задано |
+| 12 | Нажать "Add to Cart" кнопку | Товар добавляется в корзину |
+| 13 | Перейти на страницу корзины | В корзине должно загрузится 2 элемента |
+| 14 | Найти самый дешевый товар в корзине | Найден самый дешевый товар |
+| 15 | Удвоить кол-во самого дешевого товара | Кол-во обнавлено |
+| 16 | Проверить что стоиомть корзины соответствует сумме для всех товаров | Общая стоиомость корзины равна расчетной стоимости |
 
 ---
 
-## Test Case 3: Cart — Add Random Products and Remove Even-Numbered
+## Тест-кейс 3: Cart — Добавить случайные товары и удалить товары с четными номерами.
 
-**Test Object:** Cart manipulation with product addition and removal
 
-**Preconditions:**
-- Browser is open
-- Cart is empty
-
-### Test Case 3.1: Add 5 random products, remove even-numbered, verify total
+### Тест-кейс 3.1: Добавить 5 случайных товаров, удалить четные, проверить итоговую сумму.
 
 | Step | Action | Expected Result |
 |------|--------|-----------------|
-| 1 | Open the main page `https://automationteststore.com/` | Main page loads with product sections |
-| 2 | Collect all products with "Add to Cart" buttons on the main page | Products with `.productcart` buttons found (products with `href="#"` — i.e., those that can be directly added) |
-| 3 | Randomly select 5 unique products from the available list | 5 products selected |
-| 4 | For each of the 5 products: click on the product to open its page | Product page loads |
-| 5 | Set a random quantity (1-5) in the quantity input (`#product_quantity`) | Quantity is set |
-| 6 | Click "Add to Cart" button | Product is added to cart |
-| 7 | Navigate back to the main page | Main page loads |
-| 8 | After adding all 5 products, navigate to the cart page | Cart page loads with 5 items |
-| 9 | Verify all 5 products are present in the cart table | All products are listed |
-| 10 | Identify products at even positions (2nd, 4th) in the cart table | Even-numbered rows identified |
-| 11 | Remove all even-numbered products by clicking the remove button | Products are removed |
-| 12 | Verify that only odd-numbered products remain (1st, 3rd, 5th) | 3 products remain in cart |
-| 13 | Calculate expected total: sum of (unit_price * quantity) for remaining products | Expected total calculated |
-| 14 | Verify the displayed cart total matches the expected total | Cart total equals calculated total |
+| 1 | Открыть главную страницу `https://automationteststore.com/` | лавная страница загружается с разделами товаров |
+| 2 | Собрать все продукты с "Add to Cart" кнопки на главной странице |Найдены товары с кнопками |
+| 3 | Выьрать случайным образом 5 уникальных товаров из доступного списка | 5 товаров выбраны |
+| 4 | Нажать для каждого из 5 товаров: на товар, чтобы открыть его страницу | Страница продукта загружается |
+| 5 | Установить случайное количество (1-5) в поле ввода количсетва | Кол-во задано |
+| 6 | Нажать "Add to Cart" кнопку | Товар добавляется в корзину |
+| 7 | Вернуться на главную страницу | Загрузка главной страницы |
+| 8 | После добавления всех 5 товаров перейдите на страницу корзины | Страница корзины загружается с 5 товарами |
+| 9 | Проверить, что все 5 товаров присутствуют в таблице корзины | Все товары указаны |
+| 10 | Найти товары, расположенные на четных позициях (2-я, 4-я) в таблице | Выявлены строки с четными номерами |
+| 11 | Удаоить все товары с четными номерами, нажав кнопку «Удалить». | Товары удалены |
+| 12 | Посмотреть, что остались только нечётные товары (1-й, 3-й, 5-й) | В корзине осталось 3 товара |
+| 13 | Рассчитать ожидаемую общую сумму: сумма (цена за единицу * количество) для оставшихся товаров | Ожидаемая общая сумма рассчитана |
+| 14 | Посчитать, что отображаемая сумма в корзине соответствует ожидаемой сумме | Общая сумма корзины равна рассчитанной сумме |
