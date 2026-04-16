@@ -1,0 +1,32 @@
+import allure
+from selenium.webdriver.common.by import By
+from pages.base_page import BasePage
+
+
+class SearchPage(BasePage):
+    SORT_DROPDOWN = (By.ID, "sort")
+    PRODUCT_NAMES = (By.CSS_SELECTOR, ".fixed_wrapper a.prdocutname")
+    PRODUCT_CARDS = (By.CSS_SELECTOR, ".thumbnails.grid .col-md-3.col-sm-6.col-xs-12")
+    PRODUCT_GRID = (By.CSS_SELECTOR, ".thumbnails.grid")
+
+    SORT_NAME_ASC = "pd.name-ASC"
+
+    @allure.step("Sort search results by: {sort_value}")
+    def sort_by(self, sort_value: str):
+        self.select_by_value(self.SORT_DROPDOWN, sort_value)
+        self.wait_for_element(self.PRODUCT_GRID)
+
+    @allure.step("Get product links from search results")
+    def get_product_links(self) -> list[dict]:
+        products = []
+        name_elements = self.find_elements(self.PRODUCT_NAMES)
+        for el in name_elements:
+            products.append({
+                "name": el.text,
+                "link": el.get_attribute("href"),
+            })
+        return products
+
+    @allure.step("Get product names from search results")
+    def get_product_names(self) -> list[str]:
+        return self.get_texts(self.PRODUCT_NAMES)
