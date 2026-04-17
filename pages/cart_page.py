@@ -10,18 +10,17 @@ from pages.base_page import BasePage
 class CartPage(BasePage):
     CART_URL = BasePage.BASE_URL + "index.php?rt=checkout/cart"
 
-    # The cart product table is inside .cart-info.product-list
     PRODUCT_TABLE = (By.CSS_SELECTOR, ".product-list table.table")
-    # All product rows (skip header row via indexing in code)
+
     ALL_TABLE_ROWS = (By.CSS_SELECTOR, ".product-list table.table tr")
-    # Within a product row:
+
     PRODUCT_NAME_IN_ROW = (By.CSS_SELECTOR, "td:nth-child(2) a")
     UNIT_PRICE_IN_ROW = (By.CSS_SELECTOR, "td:nth-child(4)")
     TOTAL_PRICE_IN_ROW = (By.CSS_SELECTOR, "td:nth-child(6)")
     QUANTITY_INPUT_IN_ROW = (By.CSS_SELECTOR, "td:nth-child(5) input")
     REMOVE_BUTTON_IN_ROW = (By.CSS_SELECTOR, "td:nth-child(7) a")
     UPDATE_BUTTON = (By.ID, "cart_update")
-    # The totals table uses class "totalamout" (site typo)
+
     SUB_TOTAL = (By.CSS_SELECTOR, "#totals_table tr:first-child td:nth-child(2) span.bold")
     CART_TOTAL = (By.CSS_SELECTOR, "#totals_table span.totalamout:last-of-type")
     EMPTY_CART = (By.CSS_SELECTOR, ".empty_cart")
@@ -31,9 +30,7 @@ class CartPage(BasePage):
         self.open(self.CART_URL)
 
     def _get_product_rows(self):
-        """Return only product rows (skip the header row)."""
         all_rows = self.find_elements(self.ALL_TABLE_ROWS)
-        # First row is the header (th elements)
         return [r for r in all_rows if r.find_elements(By.TAG_NAME, "td")]
 
     @allure.step("Get number of items in cart")
@@ -115,7 +112,6 @@ class CartPage(BasePage):
 
     @allure.step("Get cart total")
     def get_cart_total(self) -> float:
-        # Get all totalamout spans; the last one is the grand total value
         elements = self.find_elements(
             (By.CSS_SELECTOR, "#totals_table span.totalamout")
         )

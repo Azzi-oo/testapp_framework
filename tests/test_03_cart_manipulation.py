@@ -12,22 +12,18 @@ from pages.cart_page import CartPage
 @allure.feature("Cart Manipulation")
 @pytest.mark.cart
 class TestCartManipulation:
-    """Test Case 3: Add 5 random products from main page with random quantity,
-    remove even-numbered products, check total."""
-
-    @allure.story("Add products, remove even-numbered, verify total")
-    @allure.title("Add 5 random products, remove even-numbered from cart, verify total")
+    """Тест-кейс 3: Добавить 5 случайных товаров с главной страницы в случайном количестве,удалить товары с четными номерами, проверить итоговую сумму."""
+    @allure.story("Добавить товары, удалить товары с четными номерами, проверить общую сумму.")
+    @allure.title("Добавить 5 случайных товаров, удалить четные из корзины, проверить общую сумму.")
     @allure.severity(allure.severity_level.CRITICAL)
     def test_add_random_remove_even_verify_total(self, driver):
         main_page = MainPage(driver)
         product_page = ProductPage(driver)
         cart_page = CartPage(driver)
 
-        # Step 1: Open main page and get available products
-        with allure.step("Open main page and collect available products"):
+        with allure.step("Открыть главную страницу и соберите доступные товары."):
             main_page.open_main_page()
             all_products = main_page.get_products_with_cart_button()
-            # Deduplicate by product_id
             seen_ids = set()
             unique_products = []
             for p in all_products:
@@ -38,8 +34,7 @@ class TestCartManipulation:
                 f"Expected at least 5 unique products, got {len(unique_products)}"
             )
 
-        # Step 2: Randomly select 5 products
-        with allure.step("Randomly select 5 unique products"):
+        with allure.step("Случайным образом выберите 5 уникальных товаров."):
             selected = random.sample(unique_products, 5)
             allure.attach(
                 "\n".join(
@@ -50,7 +45,6 @@ class TestCartManipulation:
                 attachment_type=allure.attachment_type.TEXT,
             )
 
-        # Step 3: Add each product with random quantity
         added_products = []
         for i, product in enumerate(selected):
             qty = random.randint(1, 5)
@@ -66,12 +60,10 @@ class TestCartManipulation:
                 })
                 time.sleep(2)
 
-        # Step 4: Go to cart
-        with allure.step("Open cart page"):
+        with allure.step("Открыть страницу корзины"):
             cart_page.open_cart()
 
-        # Step 5: Verify 5 items in cart
-        with allure.step("Verify cart has 5 items"):
+        with allure.step("Убедитесь, что в корзине 5 товаров."):
             rows_data = cart_page.get_cart_rows_data()
             assert len(rows_data) == 5, (
                 f"Expected 5 items in cart, got {len(rows_data)}"
@@ -86,16 +78,13 @@ class TestCartManipulation:
                 attachment_type=allure.attachment_type.TEXT,
             )
 
-        # Step 6: Remove even-numbered products (2nd and 4th, indices 1 and 3)
-        with allure.step("Remove even-numbered products (2nd and 4th)"):
-            # Remove 4th first (higher index) to avoid index shifting
+        with allure.step("Удалить товары с четными номерами (2-й и 4-й)."):
             cart_page.remove_product(3)
             time.sleep(1)
             cart_page.remove_product(1)
             time.sleep(1)
 
-        # Step 7: Verify 3 items remain
-        with allure.step("Verify 3 items remain in cart"):
+        with allure.step("Убедитесь, что в корзине осталось 3 товара."):
             rows_data = cart_page.get_cart_rows_data()
             assert len(rows_data) == 3, (
                 f"Expected 3 items after removal, got {len(rows_data)}"
@@ -110,8 +99,7 @@ class TestCartManipulation:
                 attachment_type=allure.attachment_type.TEXT,
             )
 
-        # Step 8: Verify cart sub-total
-        with allure.step("Verify cart sub-total matches expected"):
+        with allure.step("Проверить, соответствует ли итоговая сумма в корзине ожидаемым значениям."):
             expected_total = cart_page.calculate_expected_total()
             actual_total = cart_page.get_cart_subtotal()
             allure.attach(
