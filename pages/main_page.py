@@ -40,7 +40,6 @@ class MainPage(BasePage):
                 link = name_el.get_attribute("href")
                 product_id = cart_btn.get_attribute("data-id")
 
-                # Try to get price
                 try:
                     price_el = card.find_element(By.CSS_SELECTOR, ".oneprice")
                     price = price_el.text
@@ -51,8 +50,6 @@ class MainPage(BasePage):
                     except Exception:
                         price = "$0.00"
 
-                # Only include products that don't require options
-                # (href="#" means direct add, otherwise it links to product page for options)
                 is_simple = href and href.endswith("#")
                 if name and link and is_simple:
                     products.append({
