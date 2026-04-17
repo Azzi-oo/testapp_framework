@@ -10,27 +10,36 @@ from pages.base_page import BasePage
 class CartPage(BasePage):
     CART_URL = BasePage.BASE_URL + "index.php?rt=checkout/cart"
 
-    CART_TABLE = (By.CSS_SELECTOR, ".contentpanel table, .contentpanel form")
-    CART_ROWS = (By.CSS_SELECTOR, "table.table tbody tr")
+    # The cart product table is inside .cart-info.product-list
+    PRODUCT_TABLE = (By.CSS_SELECTOR, ".product-list table.table")
+    # All product rows (skip header row via indexing in code)
+    ALL_TABLE_ROWS = (By.CSS_SELECTOR, ".product-list table.table tr")
+    # Within a product row:
     PRODUCT_NAME_IN_ROW = (By.CSS_SELECTOR, "td:nth-child(2) a")
-    UNIT_PRICE_IN_ROW = (By.CSS_SELECTOR, "td:nth-child(4) .price")
-    TOTAL_PRICE_IN_ROW = (By.CSS_SELECTOR, "td:nth-child(6) .price")
-    QUANTITY_INPUT_IN_ROW = (By.CSS_SELECTOR, "td:nth-child(5) input[type='text']")
-    REMOVE_BUTTON_IN_ROW = (By.CSS_SELECTOR, "td a.btn")
+    UNIT_PRICE_IN_ROW = (By.CSS_SELECTOR, "td:nth-child(4)")
+    TOTAL_PRICE_IN_ROW = (By.CSS_SELECTOR, "td:nth-child(6)")
+    QUANTITY_INPUT_IN_ROW = (By.CSS_SELECTOR, "td:nth-child(5) input")
+    REMOVE_BUTTON_IN_ROW = (By.CSS_SELECTOR, "td:nth-child(7) a")
     UPDATE_BUTTON = (By.ID, "cart_update")
-    CART_TOTAL = (By.CSS_SELECTOR, ".contentpanel .cart_total .totalamount .bold")
+    # The totals table uses class "totalamout" (site typo)
+    SUB_TOTAL = (By.CSS_SELECTOR, "#totals_table tr:first-child td:nth-child(2) span.bold")
+    CART_TOTAL = (By.CSS_SELECTOR, "#totals_table span.totalamout:last-of-type")
     EMPTY_CART = (By.CSS_SELECTOR, ".empty_cart")
-    CONTINUE_BUTTON = (By.CSS_SELECTOR, "a.btn.btn-default")
 
     @allure.step("Open cart page")
     def open_cart(self):
         self.open(self.CART_URL)
 
+    def _get_product_rows(self):
+        """Return only product rows (skip the header row)."""
+        all_rows = self.find_elements(self.ALL_TABLE_ROWS)
+        # First row is the header (th elements)
+        return [r for r in all_rows if r.find_elements(By.TAG_NAME, "td")]
+
     @allure.step("Get number of items in cart")
     def get_cart_items_count(self) -> int:
         try:
-            rows = self.find_elements(self.CART_ROWS)
-            return len(rows)
+            return len(self._get_product_rows())
         except Exception:
             return 0
 
@@ -38,7 +47,7 @@ class CartPage(BasePage):
     def get_cart_rows_data(self) -> list[dict]:
         """Get all cart row data: name, unit_price, quantity, total_price."""
         rows_data = []
-        rows = self.find_elements(self.CART_ROWS)
+        rows = self._get_product_rows()
         for row in rows:
             try:
                 name = row.find_element(*self.PRODUCT_NAME_IN_ROW).text.strip()
@@ -61,7 +70,6 @@ class CartPage(BasePage):
                     "unit_price": unit_price,
                     "quantity": quantity,
                     "total_price": total_price,
-                    "row_element": row,
                 })
             except Exception:
                 continue
@@ -80,7 +88,7 @@ class CartPage(BasePage):
 
     @allure.step("Update quantity for row {row_index} to {new_quantity}")
     def update_quantity(self, row_index: int, new_quantity: int):
-        rows = self.find_elements(self.CART_ROWS)
+        rows = self._get_product_rows()
         row = rows[row_index]
         qty_input = row.find_element(*self.QUANTITY_INPUT_IN_ROW)
         self.scroll_to_element(qty_input)
@@ -93,17 +101,29 @@ class CartPage(BasePage):
 
     @allure.step("Remove product at row {row_index}")
     def remove_product(self, row_index: int):
-        rows = self.find_elements(self.CART_ROWS)
+        rows = self._get_product_rows()
         row = rows[row_index]
         remove_btn = row.find_element(*self.REMOVE_BUTTON_IN_ROW)
         self.scroll_to_element(remove_btn)
         remove_btn.click()
         time.sleep(2)
 
+    @allure.step("Get cart sub-total")
+    def get_cart_subtotal(self) -> float:
+        text = self.get_text(self.SUB_TOTAL)
+        return float(text.replace("$", "").replace(",", "").strip())
+
     @allure.step("Get cart total")
     def get_cart_total(self) -> float:
-        total_text = self.get_text(self.CART_TOTAL)
-        return float(total_text.replace("$", "").replace(",", "").strip())
+        # Get all totalamout spans; the last one is the grand total value
+        elements = self.find_elements(
+            (By.CSS_SELECTOR, "#totals_table span.totalamout")
+        )
+        for el in reversed(elements):
+            text = el.text.replace("$", "").replace(",", "").strip()
+            if text:
+                return float(text)
+        return 0.0
 
     @allure.step("Calculate expected total from rows")
     def calculate_expected_total(self) -> float:

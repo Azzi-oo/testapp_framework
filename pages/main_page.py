@@ -51,7 +51,10 @@ class MainPage(BasePage):
                     except Exception:
                         price = "$0.00"
 
-                if name and link:
+                # Only include products that don't require options
+                # (href="#" means direct add, otherwise it links to product page for options)
+                is_simple = href and href.endswith("#")
+                if name and link and is_simple:
                     products.append({
                         "name": name,
                         "link": link,
