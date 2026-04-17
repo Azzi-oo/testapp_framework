@@ -4,19 +4,19 @@ from pages.category_page import CategoryPage
 
 
 @allure.epic("Product Catalog")
-@allure.feature("Category Sorting")
+@allure.feature("Сортировка категории")
 @pytest.mark.sorting
 class TestCategorySorting:
-    """Test Case 1: Verify product sorting in a category page."""
+    """Тест-кейс 1: Фильтр категорий — Сортировка по имени и цене"""
 
-    @allure.story("Sort by Name Ascending")
-    @allure.title("Products are sorted by Name A-Z")
+    @allure.story("Сортировка по имени")
+    @allure.title("Продукты сортированы по Name A-Z")
     @allure.severity(allure.severity_level.NORMAL)
     def test_sort_by_name_asc(self, driver):
         page = CategoryPage(driver)
         page.open_category()
 
-        with allure.step("Sort by Name A - Z"):
+        with allure.step("Сортировка по Name A - Z"):
             page.sort_by(CategoryPage.SORT_NAME_ASC)
 
         with allure.step("Verify product names are in ascending order"):
@@ -27,14 +27,14 @@ class TestCategorySorting:
                 f"Products are not sorted A-Z.\nActual: {names}"
             )
 
-    @allure.story("Sort by Name Descending")
-    @allure.title("Products are sorted by Name Z-A")
+    @allure.story("Сортировка по имени")
+    @allure.title("Продукты сортированы по Name Z-A")
     @allure.severity(allure.severity_level.NORMAL)
     def test_sort_by_name_desc(self, driver):
         page = CategoryPage(driver)
         page.open_category()
 
-        with allure.step("Sort by Name Z - A"):
+        with allure.step("Сортировка по Name Z - A"):
             page.sort_by(CategoryPage.SORT_NAME_DESC)
 
         with allure.step("Verify product names are in descending order"):
@@ -45,14 +45,14 @@ class TestCategorySorting:
                 f"Products are not sorted Z-A.\nActual: {names}"
             )
 
-    @allure.story("Sort by Price Ascending")
-    @allure.title("Products are sorted by Price Low to High")
+    @allure.story("Сортировка по цене возрастания")
+    @allure.title("Продукты сортированы по цене Low to High")
     @allure.severity(allure.severity_level.NORMAL)
     def test_sort_by_price_asc(self, driver):
         page = CategoryPage(driver)
         page.open_category()
 
-        with allure.step("Sort by Price Low > High"):
+        with allure.step("Сортировка по цене Low > High"):
             page.sort_by(CategoryPage.SORT_PRICE_ASC)
 
         with allure.step("Verify product prices are in ascending order"):
@@ -62,14 +62,14 @@ class TestCategorySorting:
                 f"Prices are not sorted Low>High.\nActual: {prices}"
             )
 
-    @allure.story("Sort by Price Descending")
-    @allure.title("Products are sorted by Price High to Low")
+    @allure.story("Сортировка по цене убывания")
+    @allure.title("Продукты сортированы по цене High to Low")
     @allure.severity(allure.severity_level.NORMAL)
     def test_sort_by_price_desc(self, driver):
         page = CategoryPage(driver)
         page.open_category()
 
-        with allure.step("Sort by Price High > Low"):
+        with allure.step("Сортировка по цене High > Low"):
             page.sort_by(CategoryPage.SORT_PRICE_DESC)
 
         with allure.step("Verify product prices are in descending order"):
