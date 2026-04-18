@@ -1,9 +1,14 @@
 import pytest
-import allure
 from selenium import webdriver
 from selenium.webdriver.chrome.service import Service
 from selenium.webdriver.chrome.options import Options
 from webdriver_manager.chrome import ChromeDriverManager
+
+from pages.main_page import MainPage
+from pages.category_page import CategoryPage
+from pages.search_page import SearchPage
+from pages.product_page import ProductPage
+from pages.cart_page import CartPage
 
 
 @pytest.fixture
@@ -21,3 +26,28 @@ def driver():
     yield driver
 
     driver.quit()
+
+
+@pytest.fixture
+def main_page(driver):
+    return MainPage(driver)
+
+
+@pytest.fixture
+def category_page(driver):
+    return CategoryPage(driver)
+
+
+@pytest.fixture
+def search_page(driver):
+    return SearchPage(driver)
+
+
+@pytest.fixture
+def product_page(driver):
+    return ProductPage(driver)
+
+
+@pytest.fixture
+def cart_page(driver):
+    return CartPage(driver)

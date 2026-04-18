@@ -1,19 +1,16 @@
+import random
+
 import allure
 from selenium.webdriver.common.by import By
-from selenium.webdriver.common.keys import Keys
 from pages.base_page import BasePage
 
 
 class MainPage(BasePage):
     URL = BasePage.BASE_URL
 
-    # Locators
     SEARCH_INPUT = (By.ID, "filter_keyword")
     SEARCH_BUTTON = (By.CSS_SELECTOR, ".button-in-search")
     PRODUCT_CARDS = (By.CSS_SELECTOR, ".col-md-3.col-sm-6.col-xs-12")
-    PRODUCT_NAME_LINKS = (By.CSS_SELECTOR, "a.prdocutname")
-    ADD_TO_CART_BUTTONS = (By.CSS_SELECTOR, "a.productcart")
-    CART_BADGE = (By.CSS_SELECTOR, ".label.label-orange")
 
     @allure.step("Open main page")
     def open_main_page(self):
@@ -24,34 +21,37 @@ class MainPage(BasePage):
         self.enter_text(self.SEARCH_INPUT, keyword)
         self.click(self.SEARCH_BUTTON)
 
-    @allure.step("Get all products with Add to Cart button on main page")
+    @allure.step("Get all simple products from main page")
     def get_products_with_cart_button(self) -> list[dict]:
-        """Returns list of dicts with product name, price, and link for products
-        that can be directly added to cart (href='#')."""
+        """Return unique products that can be added to cart without options."""
         products = []
+        seen_ids = set()
         cards = self.find_elements(self.PRODUCT_CARDS)
         for card in cards:
             try:
                 cart_btn = card.find_element(By.CSS_SELECTOR, "a.productcart")
                 href = cart_btn.get_attribute("href")
-                # Products that can be added directly have href="#" or no href
+                if not (href and href.endswith("#")):
+                    continue
+
+                product_id = cart_btn.get_attribute("data-id")
+                if not product_id or product_id in seen_ids:
+                    continue
+                seen_ids.add(product_id)
+
                 name_el = card.find_element(By.CSS_SELECTOR, "a.prdocutname")
                 name = name_el.text
                 link = name_el.get_attribute("href")
-                product_id = cart_btn.get_attribute("data-id")
 
                 try:
-                    price_el = card.find_element(By.CSS_SELECTOR, ".oneprice")
-                    price = price_el.text
+                    price = card.find_element(By.CSS_SELECTOR, ".oneprice").text
                 except Exception:
                     try:
-                        price_el = card.find_element(By.CSS_SELECTOR, ".pricenew")
-                        price = price_el.text
+                        price = card.find_element(By.CSS_SELECTOR, ".pricenew").text
                     except Exception:
                         price = "$0.00"
 
-                is_simple = href and href.endswith("#")
-                if name and link and is_simple:
+                if name and link:
                     products.append({
                         "name": name,
                         "link": link,
@@ -61,3 +61,19 @@ class MainPage(BasePage):
             except Exception:
                 continue
         return products
+
+    @allure.step("Select {count} random products from main page")
+    def get_random_products(self, count: int) -> list[dict]:
+        """Open main page, collect available products, return random sample."""
+        self.open_main_page()
+        products = self.get_products_with_cart_button()
+        assert len(products) >= count, (
+            f"Expected at least {count} unique products, got {len(products)}"
+        )
+        selected = random.sample(products, count)
+        allure.attach(
+            "\n".join(f"{i+1}. {p['name']} ({p['price']})" for i, p in enumerate(selected)),
+            name="Selected products",
+            attachment_type=allure.attachment_type.TEXT,
+        )
+        return selected

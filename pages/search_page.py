@@ -30,3 +30,13 @@ class SearchPage(BasePage):
     @allure.step("Get product names from search results")
     def get_product_names(self) -> list[str]:
         return self.get_texts(self.PRODUCT_NAMES)
+
+    @allure.step("Get sorted product links for keyword '{keyword}'")
+    def search_and_sort(self, keyword: str) -> list[dict]:
+        """Perform search, sort by name A-Z, return product links."""
+        from pages.main_page import MainPage
+        main = MainPage(self.driver)
+        main.open_main_page()
+        main.search(keyword)
+        self.sort_by(self.SORT_NAME_ASC)
+        return self.get_product_links()
