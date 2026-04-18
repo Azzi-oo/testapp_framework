@@ -1,0 +1,25 @@
+============================= test session starts ==============================
+platform darwin -- Python 3.12.8, pytest-8.3.4, pluggy-1.6.0 -- /Users/azat/Development/simbirsoft_practicum/venv/bin/python
+cachedir: .pytest_cache
+rootdir: /Users/azat/Development/simbirsoft_practicum
+configfile: pytest.ini
+plugins: allure-pytest-2.13.5, xdist-3.5.0
+created: 3/3 workers
+3 workers [6 items]
+
+scheduling tests via LoadScheduling
+
+tests/test_02_search_and_cart.py::TestSearchAndCart::test_search_add_and_verify_cart 
+tests/test_01_category_sorting.py::TestCategorySorting::test_sort_by_price_asc 
+tests/test_01_category_sorting.py::TestCategorySorting::test_sort_by_name_asc 
+[gw1] [ 16%] PASSED tests/test_01_category_sorting.py::TestCategorySorting::test_sort_by_price_asc 
+tests/test_01_category_sorting.py::TestCategorySorting::test_sort_by_price_desc 
+[gw0] [ 33%] PASSED tests/test_01_category_sorting.py::TestCategorySorting::test_sort_by_name_asc 
+tests/test_01_category_sorting.py::TestCategorySorting::test_sort_by_name_desc 
+[gw1] [ 50%] PASSED tests/test_01_category_sorting.py::TestCategorySorting::test_sort_by_price_desc 
+[gw0] [ 66%] PASSED tests/test_01_category_sorting.py::TestCategorySorting::test_sort_by_name_desc 
+[gw2] [ 83%] PASSED tests/test_02_search_and_cart.py::TestSearchAndCart::test_search_add_and_verify_cart 
+tests/test_03_cart_manipulation.py::TestCartManipulation::test_add_random_remove_even_verify_total 
+[gw2] [100%] PASSED tests/test_03_cart_manipulation.py::TestCartManipulation::test_add_random_remove_even_verify_total 
+
+======================== 6 passed in 224.36s (0:03:44) =========================
