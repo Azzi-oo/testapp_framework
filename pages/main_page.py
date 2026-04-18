@@ -23,7 +23,6 @@ class MainPage(BasePage):
 
     @allure.step("Get all simple products from main page")
     def get_products_with_cart_button(self) -> list[dict]:
-        """Return unique products that can be added to cart without options."""
         products = []
         seen_ids = set()
         cards = self.find_elements(self.PRODUCT_CARDS)
@@ -64,7 +63,6 @@ class MainPage(BasePage):
 
     @allure.step("Select {count} random products from main page")
     def get_random_products(self, count: int) -> list[dict]:
-        """Open main page, collect available products, return random sample."""
         self.open_main_page()
         products = self.get_products_with_cart_button()
         assert len(products) >= count, (

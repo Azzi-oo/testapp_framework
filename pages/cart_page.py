@@ -83,7 +83,6 @@ class CartPage(BasePage):
         rows_data = self.get_cart_rows_data()
         return sum(r["unit_price"] * r["quantity"] for r in rows_data)
 
-    # --- Compound business methods ---
 
     @allure.step("Double the quantity of the cheapest product")
     def double_cheapest_quantity(self):
@@ -103,8 +102,6 @@ class CartPage(BasePage):
 
     @allure.step("Remove even-numbered products (2nd, 4th)")
     def remove_even_products(self):
-        """Remove products at even positions (2nd, 4th) from the cart table."""
-        # Remove from highest index first to avoid shifting
         cart_size = len(self._get_product_rows())
         even_indices = [i for i in range(1, cart_size, 2)]
         for idx in reversed(even_indices):
@@ -112,7 +109,6 @@ class CartPage(BasePage):
 
     @allure.step("Verify cart sub-total matches expected")
     def assert_subtotal_matches(self):
-        """Assert that the displayed sub-total equals sum of row totals."""
         expected = self.calculate_expected_total()
         actual = self.get_cart_subtotal()
         allure.attach(

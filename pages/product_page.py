@@ -22,7 +22,6 @@ class ProductPage(BasePage):
 
     @allure.step("Add product to cart: '{product_url}' qty={quantity}")
     def open_and_add_to_cart(self, product_url: str, quantity: int):
-        """Navigate to product page, set quantity, and add to cart."""
         self.open(product_url)
         self.set_quantity(quantity)
         self.add_to_cart()

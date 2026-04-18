@@ -33,7 +33,6 @@ class SearchPage(BasePage):
 
     @allure.step("Get sorted product links for keyword '{keyword}'")
     def search_and_sort(self, keyword: str) -> list[dict]:
-        """Perform search, sort by name A-Z, return product links."""
         from pages.main_page import MainPage
         main = MainPage(self.driver)
         main.open_main_page()
