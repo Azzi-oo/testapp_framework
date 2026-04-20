@@ -1,34 +1,51 @@
+"""Главная (домашняя) страница.
+
+Предоставляет доступ к вспомогательным функциям поиска и «случайного выбора товаров»,
+используемым в тестах процесса покупок.
+"""
 import random
 
 import allure
 from selenium.webdriver.common.by import By
+
+from config import BASE_URL
 from pages.base_page import BasePage
 
 
 class MainPage(BasePage):
-    URL = BasePage.BASE_URL
+    """Главная страница магазина."""
+
+    URL = BASE_URL
 
     SEARCH_INPUT = (By.ID, "filter_keyword")
     SEARCH_BUTTON = (By.CSS_SELECTOR, ".button-in-search")
-    PRODUCT_CARDS = (By.CSS_SELECTOR, ".col-md-3.col-sm-6.col-xs-12")
+    CART_BUTTONS = (By.CSS_SELECTOR, "a.productcart")
+    CARD_ANCESTOR_XPATH = "./ancestor::div[contains(@class,'col-')][1]"
 
-    @allure.step("Open main page")
+    @allure.step("Открыть главную страницу")
     def open_main_page(self):
+        """Перейти на главную страницу."""
         self.open(self.URL)
 
-    @allure.step("Search for '{keyword}'")
+    @allure.step("Поиск по '{keyword}'")
     def search(self, keyword: str):
+        """Ввести *ключевое слово* в поле поиска в заголовке и отправьте запрос."""
         self.enter_text(self.SEARCH_INPUT, keyword)
         self.click(self.SEARCH_BUTTON)
 
-    @allure.step("Get all simple products from main page")
+    @allure.step("Поиск простых товаров на главной странице")
     def get_products_with_cart_button(self) -> list[dict]:
+        """Возвращать товары, имеющиеся в наличии и представленные в одном варианте, на главную страницу.
+
+        Пропускает варианты товаров, кнопка «Добавить в корзину» которых ведет на страницу с подробным описанием товара (тег ``href`` не заканчивается на ``#``) и
+        удаляет дубликаты по ``data-id``.
+        """
         products = []
         seen_ids = set()
-        cards = self.find_elements(self.PRODUCT_CARDS)
-        for card in cards:
+        cart_buttons = self.find_elements(self.CART_BUTTONS)
+        for cart_btn in cart_buttons:
             try:
-                cart_btn = card.find_element(By.CSS_SELECTOR, "a.productcart")
+                card = cart_btn.find_element(By.XPATH, self.CARD_ANCESTOR_XPATH)
                 href = cart_btn.get_attribute("href")
                 if not (href and href.endswith("#")):
                     continue
@@ -61,8 +78,9 @@ class MainPage(BasePage):
                 continue
         return products
 
-    @allure.step("Select {count} random products from main page")
+    @allure.step("Выбрать {count} рандомные товары на главной странице")
     def get_random_products(self, count: int) -> list[dict]:
+        """Открыть главную страницу и получите *количество* уникальных случайных товаров."""
         self.open_main_page()
         products = self.get_products_with_cart_button()
         assert len(products) >= count, (

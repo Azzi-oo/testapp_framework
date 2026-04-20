@@ -1,9 +1,11 @@
+"""Pytest fixtures: browser driver + one fixture per page object."""
 import pytest
 from selenium import webdriver
 from selenium.webdriver.chrome.service import Service
 from selenium.webdriver.chrome.options import Options
 from webdriver_manager.chrome import ChromeDriverManager
 
+from config import IMPLICIT_WAIT_TIMEOUT
 from pages.main_page import MainPage
 from pages.category_page import CategoryPage
 from pages.search_page import SearchPage
@@ -13,6 +15,7 @@ from pages.cart_page import CartPage
 
 @pytest.fixture
 def driver():
+    """Fresh Chrome WebDriver per test; quits automatically on teardown."""
     chrome_options = Options()
     chrome_options.add_argument("--window-size=1920,1080")
     chrome_options.add_argument("--disable-gpu")
@@ -21,7 +24,7 @@ def driver():
 
     service = Service(ChromeDriverManager().install())
     driver = webdriver.Chrome(service=service, options=chrome_options)
-    driver.implicitly_wait(10)
+    driver.implicitly_wait(IMPLICIT_WAIT_TIMEOUT)
 
     yield driver
 
